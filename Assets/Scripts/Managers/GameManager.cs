@@ -4,15 +4,33 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public delegate void OnGameStart();
+    public OnGameStart GameStartEvent;
+
+    public delegate void OnGameOver();
+    OnGameOver GameOverEvent;
+
+    [Space]
+    public static bool isGameOver;
+    public static bool isGameStarted;
+
+
+
+
+
+    private void Awake()
     {
-        
+        isGameOver = false;
+        isGameStarted = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (Input.GetMouseButtonDown(0) && !isGameStarted)
+        {
+            isGameStarted = true;
+
+            GameStartEvent?.Invoke();
+        }
     }
 }
