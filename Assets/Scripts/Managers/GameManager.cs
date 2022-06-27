@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     OnGameOver GameOverEvent;
 
     [Space]
-    public static bool isGameOver;
+    public static bool isLevelEnded;
     public static bool isGameStarted;
 
 
@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        isGameOver = false;
+        isLevelEnded = false;
         isGameStarted = false;
     }
 

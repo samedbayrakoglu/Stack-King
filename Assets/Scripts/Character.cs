@@ -34,14 +34,9 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.isGameStarted)
+        if (GameManager.isGameStarted && !GameManager.isLevelEnded)
         {
             Move();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            stackBar.SetFillAmount(0.2f);
         }
     }
 
