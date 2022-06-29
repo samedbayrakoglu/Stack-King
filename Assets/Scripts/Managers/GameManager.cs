@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         isLevelEnded = false;
     }
 
-    private void LevelStart()
+    public void LevelStart()
     {
         isLevelStarted = true;
 
@@ -46,13 +46,5 @@ public class GameManager : MonoBehaviour
     {
         isLevelStarted = false;
         isLevelEnded = false;
-    }
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0) && !isLevelStarted)
-        {
-            LevelStart();
-        }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private Character character;
+    private Transform character;
 
     private Vector3 offset;
 
@@ -16,15 +16,12 @@ public class CameraController : MonoBehaviour
 
 
 
-    private void Awake()
+    public void StartFollow(Transform target)
     {
-        character = FindObjectOfType<Character>();
+        character = target;
 
-        offset = transform.position - character.transform.position;
-    }
+        offset = transform.position - target.position;
 
-    public void StartFollow()
-    {
         isFollowing = true;
     }
 

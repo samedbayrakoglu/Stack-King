@@ -31,6 +31,8 @@ public class Character : MonoBehaviour
     private void Awake()
     {
         SetupComponents();
+
+        stackBar.Show();
     }
 
     private void Update()
@@ -79,8 +81,6 @@ public class Character : MonoBehaviour
         {
             Debug.Log("Animator is missing!!!");
         }
-
-        lastPosX = Input.mousePosition.x;
     }
 
     private void SetupComponents()
@@ -89,8 +89,6 @@ public class Character : MonoBehaviour
         gameManager.LevelStartEvent += LevelStart;
 
         controller = GetComponent<CharacterController>();
-
-        Debug.Log("char awake");
     }
 
     public void GoToDancePoint(Transform target)
@@ -108,5 +106,10 @@ public class Character : MonoBehaviour
                 Camera.main.GetComponent<CameraController>().StopFollow();
             });
         });
+    }
+
+    private void OnDestroy()
+    {
+        gameManager.LevelStartEvent -= LevelStart;
     }
 }

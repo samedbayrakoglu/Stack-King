@@ -24,6 +24,20 @@ public class LevelManager : MonoBehaviour
     private int currentLevelNo;
     private Level currentLevel;
 
+    public int coinAmount = 0;
+
+    public int UpgradeAmount
+    {
+        get
+        {
+            upgradeAmount *= 2;
+
+            return upgradeAmount;
+        }
+    }
+    private int upgradeAmount = 10;
+
+
 
 
     private void Awake()
@@ -65,6 +79,8 @@ public class LevelManager : MonoBehaviour
         GameManager.Instance.LevelLoaded();
 
         cameraController.MoveToStart();
+
+        SaveData();
     }
 
     private void LoadNextLevel()
@@ -73,7 +89,7 @@ public class LevelManager : MonoBehaviour
 
         currentLevelNo += 1;
 
-        if (currentLevelNo >= levelUnits.Count)
+        if (currentLevelNo > levelUnits.Count)
         {
             currentLevelNo = 1;
         }
@@ -81,22 +97,18 @@ public class LevelManager : MonoBehaviour
         LoadLevel(currentLevelNo);
 
         SpawnCharacter();
-
-        SaveData();
     }
 
     public void LevelEnded()
     {
         GameManager.Instance.LevelEnded();
 
-        GameManager.Instance.LevelStartEvent -= LevelStarted;
-
         character.GoToDancePoint(currentLevel.charDancePoint);
     }
 
     private void LevelStarted()
     {
-        cameraController.StartFollow();
+        cameraController.StartFollow(character.transform);
     }
 
     private void DestroyCurrentLevel()
@@ -139,6 +151,13 @@ public class LevelManager : MonoBehaviour
         return levelDict[no];
     }
 
+
+    public void SpendCoin()
+    {
+        coinAmount -= upgradeAmount;
+
+        Debug.Log(upgradeAmount);
+    }
 
     private void Update()
     {

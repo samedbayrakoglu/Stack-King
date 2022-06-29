@@ -9,10 +9,6 @@ public class StackBar : MonoBehaviour
     [SerializeField] Image fillBar;
 
 
-    private void Awake()
-    {
-        Hide();
-    }
 
     public void SetFillAmount(float amount)
     {
