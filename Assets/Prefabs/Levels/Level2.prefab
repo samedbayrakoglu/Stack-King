@@ -80,7 +80,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charStartPoint: {fileID: 7647831299681657675}
   charDancePoint: {fileID: 7647831300963121706}
-  finishCollider: {fileID: 0}
+  finishCollider: {fileID: 5633133997032557863}
 --- !u!1 &7647831300386548887
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,6 +351,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47a067c6957284003805b0e03d543f92, type: 3}
+--- !u!114 &5633133997032557863 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8301689312746429459, guid: 47a067c6957284003805b0e03d543f92, type: 3}
+  m_PrefabInstance: {fileID: 4402673205712851252}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 655708fd467e84eacbbd6ffa900d6736, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6802622756754208334 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7169355324174346106, guid: 47a067c6957284003805b0e03d543f92, type: 3}

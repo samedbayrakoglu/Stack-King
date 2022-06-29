@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Level : MonoBehaviour
 {
+    private LevelManager levelManager;
+
     public Transform charStartPoint;
     public Transform charDancePoint;
 
@@ -13,18 +15,18 @@ public class Level : MonoBehaviour
     private void Awake()
     {
         Setup();
+
+        levelManager = FindObjectOfType<LevelManager>();
     }
 
     private void Setup()
     {
-        finishCollider.levelEndEvent += LevelEnded;
+        finishCollider.Setup(this);
     }
 
-    private void LevelEnded()
+    public void LevelEnded()
     {
-        finishCollider.levelEndEvent -= LevelEnded;
-
-        Debug.Log("yeahhh level ended");
+        levelManager.LevelEnded();
     }
 
 }

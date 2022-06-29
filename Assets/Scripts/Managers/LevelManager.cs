@@ -11,6 +11,8 @@ public class LevelUnit
 
 public class LevelManager : MonoBehaviour
 {
+    private CameraController cameraController;
+
     [SerializeField] GameObject characterPrefab;
     private Character character;
 
@@ -26,13 +28,17 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        SetupLevels();
+        SetComponents();
+
+        SetLevels();
 
         LoadData();
 
         LoadLevel(currentLevelNo);
 
         SpawnCharacter();
+
+        SaveData();
     }
 
     private void SpawnCharacter()
@@ -48,18 +54,63 @@ public class LevelManager : MonoBehaviour
 
         GameObject levelObj = Instantiate(unit.levelPrefab);
         currentLevel = levelObj.GetComponent<Level>();
+
+        AfterLevelLoad();
     }
 
-    private void LevelEnded()
+    private void AfterLevelLoad()
     {
+        GameManager.Instance.LevelStartEvent += LevelStarted;
 
+        GameManager.Instance.LevelLoaded();
+
+        cameraController.MoveToStart();
+    }
+
+    private void LoadNextLevel()
+    {
+        DestroyCurrentLevel();
+
+        currentLevelNo += 1;
+
+        if (currentLevelNo >= levelUnits.Count)
+        {
+            currentLevelNo = 1;
+        }
+
+        LoadLevel(currentLevelNo);
+
+        SpawnCharacter();
+
+        SaveData();
+    }
+
+    public void LevelEnded()
+    {
+        GameManager.Instance.LevelEnded();
+
+        GameManager.Instance.LevelStartEvent -= LevelStarted;
+
+        character.GoToDancePoint(currentLevel.charDancePoint);
+    }
+
+    private void LevelStarted()
+    {
+        cameraController.StartFollow();
+    }
+
+    private void DestroyCurrentLevel()
+    {
+        Destroy(character.gameObject);
+
+        Destroy(currentLevel.gameObject);
     }
 
     private void LoadData()
     {
-        int levelNo = PlayerPrefs.GetInt("currentLevel");
+        currentLevelNo = PlayerPrefs.GetInt("currentLevel");
 
-        if (levelNo < 1)
+        if (currentLevelNo < 1)
         {
             currentLevelNo = 1;
         }
@@ -70,7 +121,7 @@ public class LevelManager : MonoBehaviour
         PlayerPrefs.SetInt("currentLevel", currentLevelNo);
     }
 
-    private void SetupLevels()
+    private void SetLevels()
     {
         foreach (LevelUnit unit in levelUnits)
         {
@@ -78,8 +129,22 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    private void SetComponents()
+    {
+        cameraController = FindObjectOfType<CameraController>();
+    }
+
     private LevelUnit GetLevel(int no)
     {
         return levelDict[no];
+    }
+
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            LoadNextLevel();
+        }
     }
 }

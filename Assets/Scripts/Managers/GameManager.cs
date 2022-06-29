@@ -4,33 +4,55 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public delegate void OnGameStart();
-    public OnGameStart GameStartEvent;
+    public static GameManager Instance { get; private set; }
 
-    public delegate void OnGameOver();
-    OnGameOver GameOverEvent;
+    public delegate void OnLevelStart();
+    public OnLevelStart LevelStartEvent;
+
 
     [Space]
+    public static bool isLevelStarted;
     public static bool isLevelEnded;
-    public static bool isGameStarted;
-
-
-
 
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+
+        isLevelStarted = false;
         isLevelEnded = false;
-        isGameStarted = false;
+    }
+
+    private void LevelStart()
+    {
+        isLevelStarted = true;
+
+        LevelStartEvent?.Invoke();
+    }
+
+    public void LevelEnded()
+    {
+        isLevelEnded = true;
+    }
+
+    public void LevelLoaded()
+    {
+        isLevelStarted = false;
+        isLevelEnded = false;
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !isGameStarted)
+        if (Input.GetMouseButtonDown(0) && !isLevelStarted)
         {
-            isGameStarted = true;
-
-            GameStartEvent?.Invoke();
+            LevelStart();
         }
     }
 }

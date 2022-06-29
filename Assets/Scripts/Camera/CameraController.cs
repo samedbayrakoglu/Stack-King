@@ -12,6 +12,8 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] float lerpCoef;
 
+    [SerializeField] Transform startTransform;
+
 
 
     private void Awake()
@@ -19,8 +21,6 @@ public class CameraController : MonoBehaviour
         character = FindObjectOfType<Character>();
 
         offset = transform.position - character.transform.position;
-
-        StartFollow();
     }
 
     public void StartFollow()
@@ -39,6 +39,12 @@ public class CameraController : MonoBehaviour
         {
             Follow();
         }
+    }
+
+    public void MoveToStart()
+    {
+        transform.position = startTransform.localPosition;
+        transform.rotation = startTransform.localRotation;
     }
 
     private void Follow()

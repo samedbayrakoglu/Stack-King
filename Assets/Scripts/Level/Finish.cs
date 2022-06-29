@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class Finish : MonoBehaviour
 {
-    public delegate void OnLevelEnd();
-    public OnLevelEnd levelEndEvent;
-
+    private Level level;
 
     private Collider finishCollider;
 
@@ -16,11 +14,16 @@ public class Finish : MonoBehaviour
         finishCollider = GetComponent<Collider>();
     }
 
+    public void Setup(Level _level)
+    {
+        level = _level;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (!GameManager.isLevelEnded && other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player")
         {
-            levelEndEvent?.Invoke();
+            level.LevelEnded();
         }
     }
 }

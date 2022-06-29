@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Character : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class Character : MonoBehaviour
     #region  Control
     private CharacterController controller;
 
-    private Animator animator;
+    [SerializeField] Animator animator;
 
     public float verticalMovementSpeed = 8f;
     public float horizontalMovementSpeed = 4f;
@@ -34,7 +35,7 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.isGameStarted && !GameManager.isLevelEnded)
+        if (GameManager.isLevelStarted && !GameManager.isLevelEnded)
         {
             Move();
         }
@@ -66,11 +67,13 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void GameStart()
+    private void LevelStart()
     {
         if (animator != null)
         {
             animator.SetBool("Run", true);
+
+            stackBar.Show();
         }
         else
         {
@@ -83,12 +86,27 @@ public class Character : MonoBehaviour
     private void SetupComponents()
     {
         gameManager = FindObjectOfType<GameManager>(); // get it for once
-        gameManager.GameStartEvent += GameStart;
+        gameManager.LevelStartEvent += LevelStart;
 
         controller = GetComponent<CharacterController>();
 
-        animator = GetComponentInChildren<Animator>();
+        Debug.Log("char awake");
     }
 
+    public void GoToDancePoint(Transform target)
+    {
+        transform.DOLookAt(target.position, 0.2f); // rotate char to dance point
 
+        transform.DOMove(target.position, 1f).SetEase(Ease.Linear).OnComplete(() => //move char to dance point
+        {
+            transform.DOLookAt(Vector3.zero, 0.2f).OnComplete(() =>
+            {
+                animator.SetBool("Dance", true);
+
+                stackBar.Hide();
+
+                Camera.main.GetComponent<CameraController>().StopFollow();
+            });
+        });
+    }
 }
