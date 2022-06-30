@@ -11,6 +11,8 @@ public class LevelUnit
 
 public class LevelManager : MonoBehaviour
 {
+    private UIManager uIManager;
+
     private CameraController cameraController;
 
     [SerializeField] GameObject characterPrefab;
@@ -26,16 +28,8 @@ public class LevelManager : MonoBehaviour
 
     public int coinAmount = 0;
 
-    public int UpgradeAmount
-    {
-        get
-        {
-            upgradeAmount *= 2;
-
-            return upgradeAmount;
-        }
-    }
-    private int upgradeAmount = 10;
+    private int upgradeDegree = 0;
+    private int upgradePrice;
 
 
 
@@ -74,6 +68,13 @@ public class LevelManager : MonoBehaviour
 
     private void AfterLevelLoad()
     {
+        uIManager.UpdateLevelNo(currentLevelNo);
+
+        uIManager.UpdateCoinAmount(coinAmount);
+
+        CalculateUpgradePrice();
+        uIManager.tapToPlayScreen.upgradeButton.UpdatePrice(coinAmount, upgradePrice);
+
         GameManager.Instance.LevelStartEvent += LevelStarted;
 
         GameManager.Instance.LevelLoaded();
@@ -81,9 +82,11 @@ public class LevelManager : MonoBehaviour
         cameraController.MoveToStart();
 
         SaveData();
+
+        uIManager.tapToPlayScreen.Show();
     }
 
-    private void LoadNextLevel()
+    public void LoadNextLevel()
     {
         DestroyCurrentLevel();
 
@@ -109,6 +112,8 @@ public class LevelManager : MonoBehaviour
     private void LevelStarted()
     {
         cameraController.StartFollow(character.transform);
+
+        uIManager.inGameScreen.Show();
     }
 
     private void DestroyCurrentLevel()
@@ -121,16 +126,21 @@ public class LevelManager : MonoBehaviour
     private void LoadData()
     {
         currentLevelNo = PlayerPrefs.GetInt("currentLevel");
-
         if (currentLevelNo < 1)
         {
             currentLevelNo = 1;
         }
+
+        upgradeDegree = PlayerPrefs.GetInt("upgradeDegree");
+
+        coinAmount = PlayerPrefs.GetInt("coinAmount");
     }
 
     private void SaveData()
     {
         PlayerPrefs.SetInt("currentLevel", currentLevelNo);
+        PlayerPrefs.SetInt("upgradeDegree", upgradeDegree);
+        PlayerPrefs.SetInt("coinAmount", coinAmount);
     }
 
     private void SetLevels()
@@ -144,6 +154,8 @@ public class LevelManager : MonoBehaviour
     private void SetComponents()
     {
         cameraController = FindObjectOfType<CameraController>();
+
+        uIManager = FindObjectOfType<UIManager>();
     }
 
     private LevelUnit GetLevel(int no)
@@ -152,18 +164,41 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    public void SpendCoin()
+    public void EarnCoin(int amount)
     {
-        coinAmount -= upgradeAmount;
+        coinAmount += amount;
 
-        Debug.Log(upgradeAmount);
+        uIManager.UpdateCoinAmount(coinAmount);
+
+        SaveData();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.C))
         {
-            LoadNextLevel();
+            EarnCoin(1);
         }
+
+
+    }
+
+    public void SpendCoin()
+    {
+        coinAmount -= upgradePrice;
+
+        upgradeDegree += 1;
+        CalculateUpgradePrice();
+
+        uIManager.UpdateCoinAmount(coinAmount);
+
+        uIManager.tapToPlayScreen.upgradeButton.UpdatePrice(coinAmount, upgradePrice);
+
+        SaveData();
+    }
+
+    private void CalculateUpgradePrice()
+    {
+        upgradePrice = (int)Mathf.Pow(2, upgradeDegree);
     }
 }

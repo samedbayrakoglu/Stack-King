@@ -71,6 +71,8 @@ public class Character : MonoBehaviour
 
     private void LevelStart()
     {
+        gameManager.LevelStartEvent -= LevelStart;
+
         if (animator != null)
         {
             animator.SetBool("Run", true);
@@ -104,12 +106,13 @@ public class Character : MonoBehaviour
                 stackBar.Hide();
 
                 Camera.main.GetComponent<CameraController>().StopFollow();
+
+                DOVirtual.DelayedCall(1f, () => // delayed call for end screen
+                {
+                    FindObjectOfType<UIManager>().levelEndScreen.Show();
+                });
+
             });
         });
-    }
-
-    private void OnDestroy()
-    {
-        gameManager.LevelStartEvent -= LevelStart;
     }
 }

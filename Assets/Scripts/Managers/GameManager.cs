@@ -32,6 +32,9 @@ public class GameManager : MonoBehaviour
 
     public void LevelStart()
     {
+        if (isLevelStarted)
+            return;
+
         isLevelStarted = true;
 
         LevelStartEvent?.Invoke();

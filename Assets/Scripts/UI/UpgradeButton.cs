@@ -10,9 +10,11 @@ public class UpgradeButton : MonoBehaviour
 
     private Button upgradeButton;
 
-    [SerializeField] TextMeshProUGUI price;
+    [SerializeField] TextMeshProUGUI priceText;
 
     private bool isEnabled = true;
+
+    private CanvasGroup canvasGroup;
 
 
 
@@ -22,22 +24,43 @@ public class UpgradeButton : MonoBehaviour
 
         upgradeButton = GetComponent<Button>();
         upgradeButton.onClick.AddListener(OnClick);
+
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     private void OnClick()
     {
-        levelManager.SpendCoin();
+        if (!isEnabled)
+            return;
 
-        price.text = levelManager.UpgradeAmount.ToString();
+        levelManager.SpendCoin();
+    }
+
+    public void UpdatePrice(int currentCoinAmount, int price)
+    {
+        priceText.text = price.ToString();
+
+        if (price > currentCoinAmount)
+        {
+            Disable();
+        }
+        else
+        {
+            Enable();
+        }
     }
 
     private void Enable()
     {
+        isEnabled = true;
 
+        canvasGroup.alpha = 1;
     }
 
     private void Disable()
     {
+        isEnabled = false;
 
+        canvasGroup.alpha = 0.45f;
     }
 }
