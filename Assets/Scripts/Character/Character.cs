@@ -6,11 +6,13 @@ using DG.Tweening;
 public class Character : MonoBehaviour
 {
     private GameManager gameManager;
+    private LevelManager levelManager;
 
     #region  Control
     private CharacterController controller;
 
     [SerializeField] Animator animator;
+    private float runBlendValue = 0f;
 
     public float verticalMovementSpeed = 8f;
     public float horizontalMovementSpeed = 4f;
@@ -25,7 +27,7 @@ public class Character : MonoBehaviour
     #endregion
 
     [Space]
-    [SerializeField] StackBar stackBar;
+    public StackBar stackBar;
 
 
     private void Awake()
@@ -90,6 +92,8 @@ public class Character : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>(); // get it for once
         gameManager.LevelStartEvent += LevelStart;
 
+        levelManager = FindObjectOfType<LevelManager>();
+
         controller = GetComponent<CharacterController>();
     }
 
@@ -114,5 +118,22 @@ public class Character : MonoBehaviour
 
             });
         });
+    }
+
+    public void SetFillAmount(float amount)
+    {
+        stackBar.SetFillAmount(amount);
+
+        DOTween.To(x => runBlendValue = x, runBlendValue, amount, 0.5f).OnUpdate(() =>
+        {
+            animator.SetFloat("Blend", runBlendValue);
+        });
+    }
+
+    public void DirectlySetFillBar(float amount)
+    {
+        stackBar.DirectlySetFillBar(amount);
+
+        animator.SetFloat("Blend", amount);
     }
 }

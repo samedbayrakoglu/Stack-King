@@ -22,15 +22,20 @@ public class LevelEndScreen : Screen
 
 
 
-    public override void Show()
+    public override void Awake()
     {
-        BeforeShow();
-
         blackBG.DOFade(0f, 0f);
         coinIcon.DOFade(0f, 0f);
         levelTxt.alpha = 0;
         coinAmountDisplay.alpha = 0;
         nextButton.alpha = 0;
+
+        base.Awake();
+    }
+
+    public override void Show()
+    {
+        BeforeShow();
 
         canvasGroup.alpha = 1;
 
@@ -54,6 +59,12 @@ public class LevelEndScreen : Screen
     public override void Hide()
     {
         base.Hide();
+
+        blackBG.DOFade(0f, 0f);
+        coinIcon.DOFade(0f, 0f);
+        levelTxt.alpha = 0;
+        coinAmountDisplay.alpha = 0;
+        nextButton.alpha = 0;
     }
 
     public void NextButtonClicked()

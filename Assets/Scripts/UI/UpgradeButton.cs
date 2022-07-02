@@ -33,7 +33,7 @@ public class UpgradeButton : MonoBehaviour
         if (!isEnabled)
             return;
 
-        levelManager.SpendCoin();
+        levelManager.Upgrade();
     }
 
     public void UpdatePrice(int currentCoinAmount, int price)

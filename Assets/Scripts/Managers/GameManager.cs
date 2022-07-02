@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
 
         isLevelStarted = false;
         isLevelEnded = false;
+
+        Application.targetFrameRate = 60;
     }
 
     public void LevelStart()

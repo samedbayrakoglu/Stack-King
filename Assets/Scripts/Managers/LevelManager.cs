@@ -31,6 +31,10 @@ public class LevelManager : MonoBehaviour
     private int upgradeDegree = 0;
     private int upgradePrice;
 
+    public float maxStackAmount;
+    private float stackAmount;
+    private float initialStackAmount;
+
 
 
 
@@ -54,6 +58,8 @@ public class LevelManager : MonoBehaviour
         GameObject charObj = Instantiate(characterPrefab, currentLevel.charStartPoint.position, Quaternion.identity);
 
         character = charObj.GetComponent<Character>();
+
+        character.DirectlySetFillBar(initialStackAmount / maxStackAmount);
     }
 
     private void LoadLevel(int no)
@@ -68,9 +74,9 @@ public class LevelManager : MonoBehaviour
 
     private void AfterLevelLoad()
     {
-        uIManager.UpdateLevelNo(currentLevelNo);
+        uIManager.UpdateLevelNo(currentLevelNo); // updating current level number
 
-        uIManager.UpdateCoinAmount(coinAmount);
+        uIManager.UpdateCoinAmount(coinAmount); // updating coin amount
 
         CalculateUpgradePrice();
         uIManager.tapToPlayScreen.upgradeButton.UpdatePrice(coinAmount, upgradePrice);
@@ -81,7 +87,7 @@ public class LevelManager : MonoBehaviour
 
         cameraController.MoveToStart();
 
-        SaveData();
+        stackAmount = initialStackAmount;
 
         uIManager.tapToPlayScreen.Show();
     }
@@ -134,6 +140,9 @@ public class LevelManager : MonoBehaviour
         upgradeDegree = PlayerPrefs.GetInt("upgradeDegree");
 
         coinAmount = PlayerPrefs.GetInt("coinAmount");
+
+        initialStackAmount = PlayerPrefs.GetFloat("initialStackAmount");
+        Debug.Log("inital loaded: " + initialStackAmount);
     }
 
     private void SaveData()
@@ -141,6 +150,8 @@ public class LevelManager : MonoBehaviour
         PlayerPrefs.SetInt("currentLevel", currentLevelNo);
         PlayerPrefs.SetInt("upgradeDegree", upgradeDegree);
         PlayerPrefs.SetInt("coinAmount", coinAmount);
+        PlayerPrefs.SetFloat("initialStackAmount", initialStackAmount);
+        Debug.Log("inital saved: " + initialStackAmount);
     }
 
     private void SetLevels()
@@ -173,6 +184,55 @@ public class LevelManager : MonoBehaviour
         SaveData();
     }
 
+    public void Stack(int amount)
+    {
+        stackAmount += amount;
+
+        float rate = stackAmount / maxStackAmount;
+
+        if (rate > 1)
+        {
+            stackAmount = maxStackAmount;
+
+            return;
+        }
+
+        character.SetFillAmount(rate);
+        character.stackBar.FillText("+" + amount);
+    }
+
+    public void Unstack(int amount)
+    {
+        stackAmount -= amount;
+
+        float rate = stackAmount / maxStackAmount;
+
+        if (rate < 0)
+        {
+            stackAmount = 0;
+
+            return;
+        }
+
+        character.SetFillAmount(rate);
+        character.stackBar.FillText("-" + amount);
+    }
+
+    private void UpdateInitialStack()
+    {
+        float increment = 1f;
+
+        initialStackAmount += increment;
+
+        stackAmount = initialStackAmount;
+
+        character.stackBar.FillText("+" + increment);
+
+        character.stackBar.Upgrade(initialStackAmount / maxStackAmount);
+
+        SaveData();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.C))
@@ -180,19 +240,30 @@ public class LevelManager : MonoBehaviour
             EarnCoin(1);
         }
 
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            Stack(1);
+        }
 
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            Unstack(1);
+        }
     }
 
-    public void SpendCoin()
+    public void Upgrade()
     {
         coinAmount -= upgradePrice;
 
         upgradeDegree += 1;
+
         CalculateUpgradePrice();
 
         uIManager.UpdateCoinAmount(coinAmount);
 
         uIManager.tapToPlayScreen.upgradeButton.UpdatePrice(coinAmount, upgradePrice);
+
+        UpdateInitialStack();
 
         SaveData();
     }

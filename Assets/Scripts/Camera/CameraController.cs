@@ -6,6 +6,8 @@ public class CameraController : MonoBehaviour
 {
     private Transform character;
 
+    private UIManager uIManager;
+
     private Vector3 offset;
 
     private bool isFollowing = false;
@@ -15,6 +17,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] Transform startTransform;
 
 
+
+
+    private void Awake()
+    {
+        uIManager = FindObjectOfType<UIManager>();
+    }
 
     public void StartFollow(Transform target)
     {
@@ -36,6 +44,24 @@ public class CameraController : MonoBehaviour
         {
             Follow();
         }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Vector2 dasda = uIManager.inGameScreen.GetCoinScreenPoint();
+
+            Debug.Log(dasda);
+        }
+    }
+
+    public Vector3 GetCoinCamCoordinates()
+    {
+        Vector2 coinScreenCoordinate = uIManager.inGameScreen.GetCoinScreenPoint();
+
+        Camera cam = GetComponent<Camera>();
+
+        Vector3 coinUIWorldPoint = cam.ViewportToWorldPoint(new Vector3(coinScreenCoordinate.x, coinScreenCoordinate.y, cam.nearClipPlane + 3));
+
+        return coinUIWorldPoint;
     }
 
     public void MoveToStart()

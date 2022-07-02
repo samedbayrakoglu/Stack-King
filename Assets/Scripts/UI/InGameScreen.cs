@@ -31,4 +31,12 @@ public class InGameScreen : Screen
     {
         levelNo.text = "level: " + no.ToString();
     }
+
+    public Vector2 GetCoinScreenPoint()
+    {
+        float x = coinAmount.transform.position.x / UnityEngine.Screen.width;
+        float y = coinAmount.transform.position.y / UnityEngine.Screen.height;
+
+        return new Vector2(x, y);
+    }
 }
